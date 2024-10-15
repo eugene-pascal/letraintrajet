@@ -10,8 +10,7 @@
 <body>
 <div class="container mt-5">
     <h2>Task results:</h2>
-    total in sec: {{ $total[0] }} <br>
-    passed km: {{ $total[1] }}
+    total in sec: <span class="text-danger">{{ $total }}</span> <br>
 </div>
 
 </body>

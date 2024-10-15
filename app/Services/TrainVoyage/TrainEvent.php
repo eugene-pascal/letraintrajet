@@ -17,13 +17,16 @@ abstract class TrainEvent {
         return $this->distance;
     }
 
+    public function setPassedDistance(int $distance):void
+    {
+        $this->distance = $distance;
+    }
 
     protected function calculateTime($speed, $distance):int
     {
         if ($speed <= 0) {
             throw new \InvalidArgumentException('Speed must be greater than zero.');
         }
-
         return ($distance / $speed) * 3600;
     }
 

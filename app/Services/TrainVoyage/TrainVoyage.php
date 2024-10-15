@@ -12,23 +12,39 @@ class TrainVoyage {
         $this->events = collect(str_split($eventString));
     }
 
-    public function calculateTotalTime():array {
-        $totalTime = 0;
-        $distanceCoveredInKm = 0;
+    public function calculateTotalTime():int {
+        $totalTime = [];
+        $distanceCoveredInKm = [];
 
-        foreach ($this->events as $eventChar) {
+        $totalEvents = $this->events->count();
+
+        $this->events->each(function ($eventChar, $iterCollection) use (&$totalTime, &$distanceCoveredInKm, $totalEvents) {
             $event = $this->getEventClass($eventChar);
-
-            // Calculate the time for current event
-            $totalTime += $event->calculateEventTime();
-            $distanceCoveredInKm += $event->getPassedDistance();
-            echo $eventChar.'===> time: '.$event->calculateEventTime().' , passed km '. $event->getPassedDistance().'<br>';
-
-            if ($distanceCoveredInKm >= $this->distance) {
-//                break;
+            $key = '_' === $eventChar ? '200' : $eventChar;
+            if (!isset($totalTime[$key])) {
+                $totalTime[$key] = 0;
+                $distanceCoveredInKm[$key] = 0;
             }
-        }
-        return [$totalTime, $distanceCoveredInKm];
+            $totalTime[$key] += $event->calculateEventTime();
+            $distanceCoveredInKm[$key] += $event->getPassedDistance();
+
+            if ('T' === $key && !in_array($iterCollection, [0,$totalEvents-1])) {
+                $totalTime[$key] += $event->calculateEventTime();
+                $distanceCoveredInKm[$key] += $event->getPassedDistance();
+            }
+        });
+
+        $allKmExcept200 = collect($distanceCoveredInKm)
+            ->filter(function ($value) {
+                return is_numeric($value);
+            })
+            ->sum();
+
+        $fullSpeedEventModel = new FullSpeedEvent(200, $this->distance - $allKmExcept200);
+        $totalTime[200] = $fullSpeedEventModel->calculateEventTime();
+        $distanceCoveredInKm[200] = $fullSpeedEventModel->getPassedDistance();
+
+        return collect($totalTime)->sum();
     }
 
     private function getEventClass($eventChar): TrainEvent {
