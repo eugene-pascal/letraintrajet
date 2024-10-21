@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TrainVoyage;
+namespace App\Services\TrainVoyage\Traits;
 
 class StationEvent extends TrainEvent {
     public function __construct() {

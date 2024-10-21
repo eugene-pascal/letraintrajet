@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TrainVoyage;
+namespace App\Services\TrainVoyage\Traits;
 
 abstract class TrainEvent {
     protected int $speed;
@@ -17,12 +17,7 @@ abstract class TrainEvent {
         return $this->distance;
     }
 
-    public function setPassedDistance(int $distance):void
-    {
-        $this->distance = $distance;
-    }
-
-    protected function calculateTime($speed, $distance):int
+    protected function calculateTime($speed, $distance):float
     {
         if ($speed <= 0) {
             throw new \InvalidArgumentException('Speed must be greater than zero.');
@@ -30,7 +25,7 @@ abstract class TrainEvent {
         return ($distance / $speed) * 3600;
     }
 
-    public function calculateEventTime():int
+    public function calculateEventTime():float
     {
         return $this->calculateTime($this->speed, $this->distance);
     }

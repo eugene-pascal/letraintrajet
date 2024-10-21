@@ -10,12 +10,17 @@ class TaskController extends Controller
 {
     public function trainVoyage(Request $request)
     {
-        $validatedData =Validator::make($request->all(), [
+        $validatedData = Validator::make($request->all(), [
             'distance' => 'required|integer',
-            'events' => 'required|string',
+            'events' => [
+                'required',
+                'string',
+                'regex:/^([TNP\_])+$/'
+            ],
         ], [
-            'distance.distance' => 'Distance value is required',
-            'events.required' => 'Event value is required.'
+            'distance.required' => 'Distance value is required.',
+            'events.required' => 'Route value is required.',
+            'events.regex' => 'The event pattern is invalid. It should only contain T, N, P, and underscores (_).'
         ]);
 
         if ($validatedData->fails()) {
